@@ -1,3 +1,7 @@
+# ---------
+# CONSTANTS
+# ---------
+
 # Screen Dimensions
 WIDTH = 700
 HEIGHT = 700

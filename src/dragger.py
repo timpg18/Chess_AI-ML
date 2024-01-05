@@ -3,6 +3,9 @@ import pygame
 from const import *
 
 class Dragger:
+    '''
+        Responsable of dragging the pieces through screen
+    '''
 
     def __init__(self):
         self.mouseX = 0
@@ -12,8 +15,11 @@ class Dragger:
         self.piece = None
         self.dragging = False
 
-    # Blit Methods
+    # -------------
+    # CLASS METHODS
+    # -------------
 
+    # --- DRAW METHODS ---
     def update_blit(self,surface):
         # texture
         self.piece.set_texture(size=128)

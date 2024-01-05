@@ -9,9 +9,16 @@ class Square:
         self.piece = piece
         self.alphacol = self.ALPHACOLS[col]
     
+    def __str__(self):
+        return '(' + str(self.row) + ', ' + str(self.col) + ')'
+
     def __eq__(self, other):
         return self.row == other.row and self.col == other.col
     
+    # -------------
+    # OTHER METHODS
+    # -------------
+
     def has_piece(self):
         return self.piece != None
 

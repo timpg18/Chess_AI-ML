@@ -1,16 +1,19 @@
 
 class Move:
-
+    '''
+        Stores a game move data
+    '''
+    
     def __init__(self, initial, final):
-        # inital and final are squares
-        self.inital = initial
+        # initial and final are squares
+        self.initial = initial
         self.final = final
 
     def __str__(self):
         s = ''
-        s += f'({self.inital.col},{self.inital.row})'
+        s += f'({self.initial.col},{self.initial.row})'
         s += f' -> ({self.final.col},{self.final.row})'
         return s
     
     def __eq__(self, other):
-        return self.inital == other.inital and self.final == other.final
+        return self.initial == other.initial and self.final == other.final

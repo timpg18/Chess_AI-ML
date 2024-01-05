@@ -15,22 +15,27 @@ class Board:
         self._add_pieces('white')
         self._add_pieces('black')
 
+    # ------------
+    # MOVE METHODS
+    # ------------
+
+
     def move(self,piece,move, testing = False):
-        inital = move.inital
+        initial = move.initial
         final = move.final
 
         en_passant_empty = self.squares[final.row][final.col].isempty()
 
         # console board move update
-        self.squares[inital.row][inital.col].piece = None
+        self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
         
         if isinstance(piece, Pawn):
             # en passant capture
-            diff = final.col - inital.col
+            diff = final.col - initial.col
             if diff != 0 and en_passant_empty:
                 # console board move update
-                self.squares[inital.row][inital.col + diff].piece = None
+                self.squares[initial.row][initial.col + diff].piece = None
                 self.squares[final.row][final.col].piece = piece
                 if not testing :
                     sound = Sound(os.path.join(
@@ -43,8 +48,8 @@ class Board:
         
         # king castling
         if isinstance(piece, King):
-            if self.castling(inital, final) and not testing:
-                diff = final.col - inital.col
+            if self.castling(initial, final) and not testing:
+                diff = final.col - initial.col
                 rook = piece.left_rook if (diff < 0) else piece.right_rook
                 self.move(rook , rook.moves[-1])
 
@@ -61,7 +66,10 @@ class Board:
         return move in piece.moves
 
     def check_promotion(self, piece, final):
-        if final.row == 0 or final.row == 7:
+        promote_row = 0 if piece.color == 'white' else 7
+
+
+        if final.row == promote_row:
             self.squares[final.row][final.col].piece = Queen(piece.color)
 
     def castling(self, initial, final):
@@ -347,14 +355,14 @@ class Board:
 
                                 # check potential checks
                                 if bool:
-                                    if not self.in_check(piece, moveK) and not self.in_check(right_rook, moveR):
+                                    if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
                                         # append new move to rook
-                                        right_rook.add_move(moveR)
+                                        piece.left_rook.add_move(moveR)
                                         # append new move to king
                                         piece.add_move(moveK)
                                 else :
                                     # append new move to rook
-                                    right_rook.add_move(moveR)
+                                    piece.left_rook.add_move(moveR)
                                     # append new move to king
                                     piece.add_move(moveK)     
                 # king castling
@@ -384,12 +392,12 @@ class Board:
                                 if bool:
                                     if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
                                         # append new move to rook
-                                        left_rook.add_move(moveR)
+                                        piece.right_rook.add_move(moveR)
                                         # append new move to king
                                         piece.add_move(moveK)
                                 else :
                                     # append new move to rook
-                                    left_rook.add_move(moveR)
+                                    piece.right_rook.add_move(moveR)
                                     # append new move to king
                                     piece.add_move(moveK)
 

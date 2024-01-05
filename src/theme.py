@@ -1,7 +1,9 @@
 from color import Color
 
 class Theme:
-
+    '''
+        Stores the game themes data
+    '''
     def __init__(self, light_bg, dark_bg
                      , light_trace, dark_trace,
                        light_moves, dark_moves):

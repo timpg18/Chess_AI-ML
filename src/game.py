@@ -1,5 +1,6 @@
 import pygame
 
+from ai import AI
 from const import *
 from board import Board
 from dragger import Dragger
@@ -9,15 +10,20 @@ from square import Square
 class Game:
     
     def __init__(self):
-        self.next_player='white'
-        self.hovered_sqr = None
         self.board = Board()
-        self.dragger = Dragger()
+        self.ai = AI()
         self.config = Config()
+        self.dragger = Dragger()
+        self.next_player='white'
+        self.gamemode = 'ai'
+        self.hovered_sqr = None
+        self.selected_piece = None
 
-    # Show/Blit methods
+    # ------------
+    # DRAW METHODS
+    # ------------
 
-    def show_bg(self,surface):
+    def show_bg(self, surface):
         theme = self.config.theme
 
         for row in range(ROWS):
@@ -49,6 +55,12 @@ class Game:
                     # blit
                     surface.blit(lbl, lbl_pos)
 
+        if self.board.last_move:
+            self.show_last_move(surface)
+
+        if self.selected_piece:
+            self.show_moves(surface)
+        
     
     def show_pieces(self,surface):
         for row in range(ROWS):
@@ -58,20 +70,20 @@ class Game:
                     piece = self.board.squares[row][col].piece
 
                     # all pieces except dragger piece
-                    if piece is not self.dragger.piece:
+                    if piece is not self.selected_piece:
                         piece.set_texture(size=80)
-                        img = pygame.image.load(piece.texture)
+                        texture = piece.texture
+                        img = pygame.image.load(texture)
                         img_center = col * SQSIZE + SQSIZE //2 , row * SQSIZE + SQSIZE //2
                         piece.texture_rect =  img.get_rect(center = img_center)
                         surface.blit(img, piece.texture_rect)
     
     def show_moves(self, surface):
-        theme = self.config.theme
+        if self.selected_piece:
+            theme = self.config.theme
 
-        if self.dragger.dragging:
-            piece = self.dragger.piece
 
-            for move in piece.moves:
+            for move in self.selected_piece.moves:
                 # color
                 color = theme.moves.light if (move.final.row + move.final.col) % 2 == 0 else theme.moves.dark
                 # rect
@@ -83,7 +95,7 @@ class Game:
         theme = self.config.theme
 
         if self.board.last_move:
-            initial = self.board.last_move.inital
+            initial = self.board.last_move.initial
             final = self.board.last_move.final
 
             for pos in [initial,final]:
@@ -103,23 +115,33 @@ class Game:
             # blit
             pygame.draw.rect(surface,color,rect, width = 3)
 
+    # -------------
+    # OTHER METHODS
+    # -------------
 
-    # other methods
-                
-    def next_turn(self):
-        self.next_player = 'white' if self.next_player == 'black' else 'black'
-    
-    def set_hover(self, row, col):
-        self.hovered_sqr = self.board.squares[row][col]
-    
     def change_theme(self):
         self.config.change_theme()
-
+    
     def play_sound(self, captured=False):
         if captured:
             self.config.capture_sound.play()
         else :
             self.config.move_sound.play()
+    
+    def next_turn(self):
+        self.next_player = 'white' if self.next_player == 'black' else 'black'
+    
+    def change_gamemode(self):
+        self.gamemode = 'ai' if self.gamemode == 'pvp' else 'pvp'
+
+    def set_hover(self, row, col):
+        self.hovered_sqr = self.board.squares[row][col]
+    
+    def select_piece(self, piece):
+        self.selected_piece = piece
+    
+    def unselect_piece(self):
+        self.selected_piece = None
     
     def reset(self):
         self.__init__()

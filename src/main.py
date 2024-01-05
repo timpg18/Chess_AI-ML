@@ -18,14 +18,13 @@ class Main:
         game = self.game
         screen = self.screen
         board = self.game.board
+        ai = self.game.ai
         dragger = self.game.dragger
 
         while True:
-            # show methods
-            game.show_bg(screen)
-            game.show_last_move(screen)
-            game.show_moves(screen)
-            game.show_pieces(screen)
+            if not game.selected_piece:
+                game.show_bg(screen)
+                game.show_pieces(screen)
 
             game.show_hover(screen)
 
@@ -38,6 +37,7 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     dragger.update_mouse(event.pos)
 
+                    pos = event.pos
                     clicked_row = dragger.mouseY // SQSIZE
                     clicked_col = dragger.mouseX // SQSIZE
 
@@ -47,12 +47,12 @@ class Main:
                             piece = board.squares[clicked_row][clicked_col].piece
                             #valid piece (color) ?
                             if piece.color == game.next_player:
+                                game.select_piece(piece)
                                 board.calc_moves(piece, clicked_row, clicked_col, bool=True)
                                 dragger.save_initial(event.pos)
                                 dragger.drag_piece(piece)
                                 #show methods
                                 game.show_bg(screen)
-                                game.show_moves(screen)
                                 game.show_pieces(screen)
 
                 # mouse motion
@@ -67,8 +67,6 @@ class Main:
                         dragger.update_mouse(event.pos)
                         #show methods
                         game.show_bg(screen)
-                        game.show_last_move(screen)
-                        game.show_moves(screen)
                         game.show_pieces(screen)
                         game.show_hover(screen)
                         dragger.update_blit(screen)
@@ -92,19 +90,46 @@ class Main:
                             # normal capture
                             captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
+                            # sounds
+                            game.play_sound(captured)
 
                             board.set_true_en_passant(dragger.piece)
 
-                            # sounds
-                            game.play_sound(captured)
                             # show methods
                             game.show_bg(screen)
-                            game.show_last_move(screen)
+                            # game.show_last_move(screen)
                             game.show_pieces(screen)
-                            # next turn
+                            # next -> AI
                             game.next_turn()
 
+                            # --------------
+                            # >>>>> AI >>>>>
+                            # --------------
 
+                            if game.gamemode == 'ai':
+                                # update
+                                game.unselect_piece()
+                                game.show_pieces(screen)
+                                pygame.display.flip()
+                                #optimal move
+                                move = ai.eval(board)
+                                initial = move.initial
+                                final = move.final
+                                # piece
+                                piece = board.squares[initial.row][initial.col].piece
+                                # capture
+                                captured = board.squares[final.row][final.col].has_piece()
+                                # move
+                                board.move(piece, move)
+                                game.play_sound(captured)
+                                # draw
+                                game.show_bg(screen)
+                                game.show_pieces(screen)
+                                # next -> AI
+                                game.next_turn()
+                            
+
+                    game.unselect_piece()
                     dragger.undrag_piece()
 
                 # key press
@@ -114,21 +139,33 @@ class Main:
                     if event.key == pygame.K_t:
                         game.change_theme()
                     
+                    # gamemode
+                    if event.key == pygame.K_a:
+                        game.change_gamemode()
+
                     # restarting the game
                     if event.key == pygame.K_r:
                         game.reset()
+
                         game = self.game
                         board = self.game.board
                         dragger = self.game.dragger
+                        ai = self.game.ai
 
+                    # depth
+                    if event.key == pygame.K_3:
+                        ai.depth = 3
 
+                    if event.key == pygame.K_4:
+                        ai.depth = 4
+                    
                 # quit the application
-                if event.type == pygame.QUIT:
+                elif event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
             
 
-            pygame.display.update()
+            pygame.display.flip()
 
 
 main = Main()

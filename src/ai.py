@@ -169,6 +169,8 @@ class AI:
         if depth == 0:
             return self.static_eval(board), None # eval, move
         
+        best_move= None
+
         # white
         if maximizing:
             max_eval = -math.inf

@@ -46,12 +46,12 @@ class Board:
             else:
                 self.check_promotion(piece, final)
         
-        # king castling
-        if isinstance(piece, King):
-            if self.castling(initial, final) and not testing:
-                diff = final.col - initial.col
-                rook = piece.left_rook if (diff < 0) else piece.right_rook
-                self.move(rook , rook.moves[-1])
+        # # king castling
+        # if isinstance(piece, King):
+        #     if self.castling(initial, final) and not testing:
+        #         diff = final.col - initial.col
+        #         rook = piece.left_rook if (diff < 0) else piece.right_rook
+        #         self.move(rook , rook.moves[-1])
 
         # move
         piece.moved = True
@@ -164,7 +164,7 @@ class Board:
             # en passant moves
             r = 3 if piece.color == 'white' else 4
             fr = 2 if piece.color == 'white' else 5
-            # left en pessant
+            # left en passant
             if Square.in_range(col-1) and row == r:
                 if self.squares[row][col-1].has_enemy_piece(piece.color):
                     p = self.squares[row][col-1].piece
@@ -328,78 +328,78 @@ class Board:
                             # append new move
                             piece.add_move(move)
 
-            # castling moves
-            if not piece.moved:
-                # queen castling
-                left_rook = self.squares[row][0].piece
-                if isinstance(left_rook, Rook):
-                    if not left_rook.moved:
-                        for c in range(1,4):
-                             # castling is not possible because there are pieces in between
-                            if self.squares[row][c].has_piece():
-                                break
+            # # castling moves
+            # if not piece.moved:
+            #     # queen castling
+            #     left_rook = self.squares[row][0].piece
+            #     if isinstance(left_rook, Rook):
+            #         if not left_rook.moved:
+            #             for c in range(1,4):
+            #                  # castling is not possible because there are pieces in between
+            #                 if self.squares[row][c].has_piece():
+            #                     break
 
-                            if c == 3:
-                                # adds left rook to king
-                                piece.left_rook = left_rook
+            #                 if c == 3:
+            #                     # adds left rook to king
+            #                     piece.left_rook = left_rook
 
-                                # rook move
-                                initial = Square(row, 0)
-                                final = Square(row, 3)
-                                moveR = Move(initial, final)
+            #                     # rook move
+            #                     initial = Square(row, 0)
+            #                     final = Square(row, 3)
+            #                     moveR = Move(initial, final)
 
-                                # king move
-                                initial = Square(row, col)
-                                final = Square(row, 2)
-                                moveK = Move(initial, final) 
+            #                     # king move
+            #                     initial = Square(row, col)
+            #                     final = Square(row, 2)
+            #                     moveK = Move(initial, final) 
 
-                                # check potential checks
-                                if bool:
-                                    if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
-                                        # append new move to rook
-                                        piece.left_rook.add_move(moveR)
-                                        # append new move to king
-                                        piece.add_move(moveK)
-                                else :
-                                    # append new move to rook
-                                    piece.left_rook.add_move(moveR)
-                                    # append new move to king
-                                    piece.add_move(moveK)     
-                # king castling
-                right_rook = self.squares[row][7].piece
-                if isinstance(right_rook, Rook):
-                    if not right_rook.moved:
-                        for c in range(5,7):
-                             # castling is not possible because there are pieces in between
-                            if self.squares[row][c].has_piece():
-                                break
+            #                     # check potential checks
+            #                     if bool:
+            #                         if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
+            #                             # append new move to rook
+            #                             piece.left_rook.add_move(moveR)
+            #                             # append new move to king
+            #                             piece.add_move(moveK)
+            #                     else :
+            #                         # append new move to rook
+            #                         piece.left_rook.add_move(moveR)
+            #                         # append new move to king
+            #                         piece.add_move(moveK)     
+            #     # king castling
+            #     right_rook = self.squares[row][7].piece
+            #     if isinstance(right_rook, Rook):
+            #         if not right_rook.moved:
+            #             for c in range(5,7):
+            #                  # castling is not possible because there are pieces in between
+            #                 if self.squares[row][c].has_piece():
+            #                     break
 
-                            if c == 6:
-                                # adds right rook to king
-                                piece.right_rook = right_rook
+            #                 if c == 6:
+            #                     # adds right rook to king
+            #                     piece.right_rook = right_rook
 
-                                # rook move
-                                initial = Square(row, 7)
-                                final = Square(row, 5)
-                                moveR = Move(initial, final)
+            #                     # rook move
+            #                     initial = Square(row, 7)
+            #                     final = Square(row, 5)
+            #                     moveR = Move(initial, final)
 
-                                # king move
-                                initial = Square(row, col)
-                                final = Square(row, 6)
-                                moveK = Move(initial, final)
+            #                     # king move
+            #                     initial = Square(row, col)
+            #                     final = Square(row, 6)
+            #                     moveK = Move(initial, final)
 
-                                # check potential checks
-                                if bool:
-                                    if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
-                                        # append new move to rook
-                                        piece.right_rook.add_move(moveR)
-                                        # append new move to king
-                                        piece.add_move(moveK)
-                                else :
-                                    # append new move to rook
-                                    piece.right_rook.add_move(moveR)
-                                    # append new move to king
-                                    piece.add_move(moveK)
+            #                     # check potential checks
+            #                     if bool:
+            #                         if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
+            #                             # append new move to rook
+            #                             piece.right_rook.add_move(moveR)
+            #                             # append new move to king
+            #                             piece.add_move(moveK)
+            #                     else :
+            #                         # append new move to rook
+            #                         piece.right_rook.add_move(moveR)
+            #                         # append new move to king
+            #                         piece.add_move(moveK)
 
         if isinstance(piece,Pawn): 
             pawn_moves()

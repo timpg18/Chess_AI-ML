@@ -154,10 +154,10 @@ class Main:
 
                     # depth
                     if event.key == pygame.K_3:
-                        ai.depth = 3
+                        ai.depth = 2
 
                     if event.key == pygame.K_4:
-                        ai.depth = 4
+                        ai.depth = 3
                     
                 # quit the application
                 elif event.type == pygame.QUIT:

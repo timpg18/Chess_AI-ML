@@ -6,7 +6,7 @@ from book import Book
 
 class AI:
 
-    def __init__(self, engine='book', depth=3):
+    def __init__(self, engine='book', depth=2):
         self.engine = engine
         self.depth = depth
         self.book = Book()
